@@ -64,9 +64,9 @@ BarWidget {
       rotation: root.vertical ? 90 : 0
       transformOrigin: Item.Center
 
-      SysSegment { icon: "\uf2db"; value: root.cpuUsage + "%" }
-      SysSegment { icon: "\uefc5"; value: root.memUsage + "%" }
-      SysSegment { icon: "\uf019"; value: Model.formatSpeed(root.downSpeed) }
+      SysSegment { icon: "\uf2db"; value: root.cpuUsage + "%"; fixedValueWidth: 40 }
+      SysSegment { icon: "\uefc5"; value: root.memUsage + "%"; fixedValueWidth: 40 }
+      SysSegment { icon: "\uf019"; value: Model.formatSpeed(root.downSpeed); fixedValueWidth: 76 }
     }
   }
 
@@ -74,6 +74,10 @@ BarWidget {
     id: segment
     required property string icon
     required property string value
+    // Fixed-width, right-aligned value cell: digit changes never reflow the
+    // bar, so 1/2/3-digit values occupy identical space.
+    readonly property real valueWidth: segment.fixedValueWidth
+    property real fixedValueWidth: 0
 
     spacing: Style.space(4)
 
@@ -91,10 +95,12 @@ BarWidget {
     }
 
     Text {
+      width: segment.valueWidth
       anchors.verticalCenter: parent.verticalCenter
       text: segment.value
+      horizontalAlignment: Text.AlignRight
       color: root.foreground
-      font.family: root.family
+      font.family: "monospace"
       font.pixelSize: Style.font.caption
       renderType: Text.NativeRendering
     }
